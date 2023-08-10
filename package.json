@@ -14,8 +14,10 @@
   "dependencies": {
     "@knowlearning/agents": "^0.6.4",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
+    "@vitejs/plugin-vue": "^4.2.3",
     "paper": "^0.12.17",
-    "plugin-basic-ssl~": "link:\u001b[200~@vitejs/plugin-basic-ssl~",
-    "vite": "^4.4.9"
+    "plugin-basic-ssl": "@vitejs/plugin-basic-ssl",
+    "vite": "^4.4.9",
+    "vue": "^3.3.4"
   }
 }

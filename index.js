@@ -1,30 +1,44 @@
+import { browserAgent } from '@knowlearning/agents'
 import paper from 'paper'
 
-window.onload = function() {
-  const canvas = document.getElementById('myCanvas');
-  paper.setup(canvas)
+window.Agent = browserAgent()
 
-  const circle = new paper.Path.Circle({
-    center: paper.view.center,
-    radius: 50,
-    fillColor: 'red'
-  })
+const statePromise = Agent.state('some-state')
 
+function initializeItem(id, state) {
   const image = new paper.Raster('/rose.png')
 
-  image.position = paper.view.center
+  const { x, y } = state[id].position
+  image.position = { x, y }
+
   image.scale(0.5)
 
   image.onMouseDrag = event => {
     image.position = image.position.add(event.delta)
+    const { x, y } = image.position
+    state[id].position = { x, y }
   }
 
-  image.onMouseUp = event => {
-    const target = {
-      position: paper.view.center
-    }
-    image.tweenTo(target, { duration: 300 })
+  image.onDoubleClick = async event => {
+    event.stopPropagation()
+    image.remove()
+    delete state[id]
   }
+}
 
-  paper.view.draw()
+window.onload = async function() {
+  const state = await statePromise
+  const canvas = document.getElementById('myCanvas')
+  paper.setup(canvas)
+
+  Object
+    .keys(state)
+    .forEach(id => initializeItem(id, state))
+
+  paper.view.onDoubleClick = ({ point: { x, y } }) => {
+    const id = Agent.uuid()
+    const position = { x, y }
+    state[id] = { position }
+    initializeItem(id, state)
+  }
 }
