@@ -1,14 +1,17 @@
 import { browserAgent } from '@knowlearning/agents'
 import paper from 'paper'
 
+window.paper = paper
+
 window.Agent = browserAgent()
 
 const statePromise = Agent.state('some-state')
 
-function initializeItem(id, state) {
-  const image = new paper.Raster('/rose.png')
+function initializeRaster(id, state) {
+  const { source, position } = state[id]
+  const image = new paper.Raster(source)
 
-  const { x, y } = state[id].position
+  const { x, y } = position
   image.position = { x, y }
 
   image.scale(0.5)
@@ -26,6 +29,10 @@ function initializeItem(id, state) {
   }
 }
 
+function initializeItem(id, state) {
+  if (state[id].type === 'raster') initializeRaster(id, state)
+}
+
 window.onload = async function() {
   const state = await statePromise
   const canvas = document.getElementById('myCanvas')
@@ -38,7 +45,11 @@ window.onload = async function() {
   paper.view.onDoubleClick = ({ point: { x, y } }) => {
     const id = Agent.uuid()
     const position = { x, y }
-    state[id] = { position }
+    state[id] = {
+      type: 'raster',
+      position,
+      source: '/rose.png'
+    }
     initializeItem(id, state)
   }
 }
