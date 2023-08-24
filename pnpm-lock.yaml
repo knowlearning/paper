@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@knowlearning/agents':
-    specifier: ^0.7.3
-    version: 0.7.3
+    specifier: ^0.7.4
+    version: 0.7.4
   '@vitejs/plugin-basic-ssl':
     specifier: ^1.0.1
     version: 1.0.1(vite@4.4.9)
@@ -258,8 +258,8 @@ packages:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
     dev: false
 
-  /@knowlearning/agents@0.7.3:
-    resolution: {integrity: sha512-bkeTw0+OyrHRxwn5JM2Ya/kwpKgAiW9DvwkGGYhg/KgsWmepINpkqoIgNRN8Q63guSEiwo7yrQt114m8nSJmKg==}
+  /@knowlearning/agents@0.7.4:
+    resolution: {integrity: sha512-ZaVIcLYGgbAIpqqowZRmhQAtUd0CeTFo7JyfC4WZ1miWDLWCbndepkD8UejFIq6bLKKfPcbgs/F+9yCBbOAVgw==}
     dependencies:
       fast-json-patch: 3.1.1
       uuid: 8.3.2
@@ -416,8 +416,8 @@ packages:
     resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
     dev: false
 
-  /fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+  /fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
@@ -460,7 +460,7 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: false
 
   /source-map-js@1.0.2:
@@ -510,7 +510,7 @@ packages:
       postcss: 8.4.27
       rollup: 3.28.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: false
 
   /vue@3.3.4:

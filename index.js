@@ -1,26 +1,33 @@
 import { browserAgent } from '@knowlearning/agents'
 import paper from 'paper'
+import { createApp } from 'vue'
+import Outline from './outline.vue'
 
 window.paper = paper
-
 window.Agent = browserAgent()
 
-const statePromise = Agent.state('some-state')
+const id = 'some-state-id'
+
+function makeDraggable(item, state) {
+  item.onMouseDrag = event => {
+    item.position = item.position.add(event.delta)
+    const { x, y } = item.position
+    state.position = { x, y }
+  }
+}
+
+const statePromise = Agent.state(id)
 
 function initializeRaster(id, state) {
-  const { source, position } = state[id]
+  const { source, position, scale } = state[id]
   const image = new paper.Raster(source)
 
   const { x, y } = position
   image.position = { x, y }
 
-  image.scale(0.5)
+  image.scale(scale)
 
-  image.onMouseDrag = event => {
-    image.position = image.position.add(event.delta)
-    const { x, y } = image.position
-    state[id].position = { x, y }
-  }
+  makeDraggable(image, state[id])
 
   image.onDoubleClick = async event => {
     event.stopPropagation()
@@ -35,21 +42,33 @@ function initializeItem(id, state) {
 
 window.onload = async function() {
   const state = await statePromise
-  const canvas = document.getElementById('myCanvas')
+
+  createApp(Outline, { id, select: function(e) {
+    console.log(e)
+  } }).mount('#outline')
+
+  const canvas = document.getElementById('canvas')
   paper.setup(canvas)
 
   Object
     .keys(state)
     .forEach(id => initializeItem(id, state))
+  
+  function uniqueSuffix(prefix) {
+    let num = 1
+    while (state[`${prefix} ${num}`]) num += 1
+    return `${prefix} ${num}`
+  }
 
   paper.view.onDoubleClick = ({ point: { x, y } }) => {
-    const id = Agent.uuid()
+    const name = uniqueSuffix('Object')
     const position = { x, y }
-    state[id] = {
+    state[name] = {
       type: 'raster',
       position,
-      source: '/rose.png'
+      source: '/rose.png',
+      scale: 1
     }
-    initializeItem(id, state)
+    initializeItem(name, state)
   }
 }
