@@ -3,6 +3,8 @@ import paper from 'paper'
 import { createApp } from 'vue'
 import Outline from './outline.vue'
 
+const BOUNDS_CORNER_NAMES = new Set('top-left,top-right,bottom-left,bottom-right'.split(','))
+
 window.paper = paper
 window.Agent = browserAgent()
 
@@ -48,7 +50,9 @@ function makeDraggable(item, state) {
       select(null)
     }
     else if (hitResult.type === 'bounds') {
-      mode = "scale"
+      if (BOUNDS_CORNER_NAMES.has(hitResult.name)) {
+        mode = "scale"
+      }
     }
     else mode = "drag"
   })
@@ -94,18 +98,22 @@ function initializeRaster(id, state) {
 
   makeDraggable(image, state[id])
 
-  image.onDoubleClick = async event => {
-    event.stopPropagation()
-    image.remove()
-    delete state[id]
-  }
-
   image.onClick = () => select(image)
   return image
 }
 
 function initializeItem(id, state) {
-  if (state[id].type === 'raster') return initializeRaster(id, state)
+  let item
+  if (state[id].type === 'raster') item = initializeRaster(id, state)
+
+  window.addEventListener('keyup', ({ key }) => {
+    if ((key === 'Delete' || key === 'Backspace') && item === selected) {
+      item.remove()
+      delete state[id]
+    }
+  })
+
+  return item
 }
 
 window.onload = async function() {
@@ -142,6 +150,7 @@ window.onload = async function() {
       scale: 1
     }
     const item = initializeItem(name, state)
+
     select(item)
   }
 }
