@@ -147,7 +147,7 @@ window.onload = async function() {
       type: 'raster',
       position,
       source: '/rose.png',
-      scale: 1
+      scale: [1, 1]
     }
     const item = initializeItem(name, state)
 
