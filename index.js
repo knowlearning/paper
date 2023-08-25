@@ -15,7 +15,8 @@ var hitOptions = {
 	stroke: true,
 	fill: true,
 	tolerance: 10,
-  bounds: true
+  bounds: true,
+  selected: true
 }
 
 const onMouseDownHandlers = []
@@ -31,7 +32,7 @@ function onMouseDrag(fn) {
 function select(item) {
   if (selected) selected.selected = false
   selected = item
-  selected.selected = true
+  if (selected) selected.selected = true
 }
 
 function makeDraggable(item, state) {
@@ -40,7 +41,12 @@ function makeDraggable(item, state) {
     if (selected !== item) return
 
     const hitResult = paper.project.hitTest(event.point, hitOptions)
-    if (hitResult && hitResult.type === 'bounds') console.log(hitResult.name)
+    if (!hitResult || hitResult.item !== item) {
+      select(null)
+    }
+    else if (hitResult.type === 'bounds') {
+      console.log(hitResult.name)
+    }
   })
 
   onMouseDrag(event => {
@@ -112,7 +118,6 @@ window.onload = async function() {
       scale: 1
     }
     const item = initializeItem(name, state)
-    console.log(item)
     select(item)
   }
 }
