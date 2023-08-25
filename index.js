@@ -20,14 +20,11 @@ var hitOptions = {
 }
 
 const onMouseDownHandlers = []
-function onMouseDown(fn) {
-  onMouseDownHandlers.push(fn)
-}
-
+function onMouseDown(fn) { onMouseDownHandlers.push(fn) }
+const onMouseUpHandlers = []
+function onMouseUp(fn) { onMouseUpHandlers.push(fn) }
 const onMouseDragHandlers = []
-function onMouseDrag(fn) {
-  onMouseDragHandlers.push(fn)
-}
+function onMouseDrag(fn) { onMouseDragHandlers.push(fn) }
 
 function select(item) {
   if (selected) selected.selected = false
@@ -36,25 +33,51 @@ function select(item) {
 }
 
 function makeDraggable(item, state) {
+  let mode = null
+  let originalPoint = null
+  let originalScale = null
 
   onMouseDown(event => {
     if (selected !== item) return
+
+    originalPoint = event.point
+    originalScale = item.matrix.scaling
 
     const hitResult = paper.project.hitTest(event.point, hitOptions)
     if (!hitResult || hitResult.item !== item) {
       select(null)
     }
     else if (hitResult.type === 'bounds') {
-      console.log(hitResult.name)
+      mode = "scale"
     }
+    else mode = "drag"
+  })
+
+  onMouseUp(event => {
+    mode = null
   })
 
   onMouseDrag(event => {
     if (selected !== item) return
 
-    item.position = item.position.add(event.delta)
-    const { x, y } = item.position
-    state.position = { x, y }
+    if (mode === "drag") {
+      item.position = item.position.add(event.delta)
+      const { x, y } = item.position
+      state.position = { x, y }
+    }
+    else if (mode === "scale") {
+      const center = item.position
+      const to = event.point
+      const scaleX = Math.abs((to.x - center.x) / (originalPoint.x - center.x))
+      const scaleY = Math.abs((to.y - center.y) / (originalPoint.y - center.y))
+      const scale = Math.max(
+        scaleX/(item.matrix.scaling.x/originalScale.x),
+        scaleY/(item.matrix.scaling.y/originalScale.y)
+      )
+      item.scale(scale)
+      const { x, y } = item.matrix.scaling
+      state.scale = [x, y]
+    }
   })
 }
 
@@ -97,6 +120,7 @@ window.onload = async function() {
 
   paper.view.onMouseDown = event => onMouseDownHandlers.forEach(fn => fn(event))
   paper.view.onMouseDrag = event => onMouseDragHandlers.forEach(fn => fn(event))
+  paper.view.onMouseUp = event => onMouseUpHandlers.forEach(fn => fn(event))
 
   Object
     .keys(state)
